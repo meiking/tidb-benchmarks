@@ -2,10 +2,8 @@ package mysql
 
 import (
 	"context"
-	"crypto/tls"
 	"database/sql"
 	"fmt"
-	"strings"
 
 	mysqlDriver "github.com/go-sql-driver/mysql"
 
@@ -18,22 +16,22 @@ type Client struct {
 
 func Open(ctx context.Context, cfg config.Config) (*Client, error) {
 	dsn := cfg.MySQLDSN
-	if cfg.MySQLTLSSkipVerify {
-		parsed, err := mysqlDriver.ParseDSN(dsn)
-		if err != nil {
-			return nil, err
-		}
-		// Global registry: ignore the "already exists" error if this is not the first registration.
-		name := "bench_tls_skip_verify"
-		if err := mysqlDriver.RegisterTLSConfig(name, &tls.Config{InsecureSkipVerify: true}); err != nil {
-			// Unfortunately go-sql-driver/mysql doesn't expose a typed error for this.
-			if !strings.Contains(err.Error(), "already") {
-				return nil, err
-			}
-		}
-		parsed.TLSConfig = name
-		dsn = parsed.FormatDSN()
+	parsed, err := mysqlDriver.ParseDSN(dsn)
+	if err != nil {
+		return nil, err
 	}
+
+	if cfg.MySQLTLS {
+		// Enable TLS by default unless DSN already specifies tls.
+		if parsed.TLSConfig == "" {
+			parsed.TLSConfig = "true"
+		}
+	} else {
+		// Explicitly disable TLS (even if DSN had tls=...).
+		parsed.TLSConfig = "false"
+	}
+
+	dsn = parsed.FormatDSN()
 
 	dbConn, err := sql.Open("mysql", dsn)
 	if err != nil {

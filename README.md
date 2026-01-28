@@ -24,6 +24,7 @@ go build -o bench ./cmd/bench
 ./bench prepare \
   --db mysql \
   --mysql-dsn 'root:password@tcp(127.0.0.1:3306)/test?parseTime=true&multiStatements=true' \
+  --mysql-tls=true \
   --mysql-tls-skip-verify=false \
   --table sbtest \
   --table-size 100000 \
@@ -32,6 +33,7 @@ go build -o bench ./cmd/bench
 ./bench run read-only \
   --db mysql \
   --mysql-dsn 'root:password@tcp(127.0.0.1:3306)/test?parseTime=true&multiStatements=true' \
+  --mysql-tls=true \
   --mysql-tls-skip-verify=false \
   --table sbtest \
   --table-size 100000 \

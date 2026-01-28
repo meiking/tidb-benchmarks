@@ -23,8 +23,8 @@ const (
 type Config struct {
 	DB DBKind
 
-	MySQLDSN           string
-	MySQLTLSSkipVerify bool
+	MySQLDSN string
+	MySQLTLS bool
 
 	CassandraHosts         string
 	CassandraKeyspace      string
@@ -52,6 +52,7 @@ func Default() Config {
 	return Config{
 		DB:                   DBMySQL,
 		MySQLDSN:             "root:@tcp(127.0.0.1:3306)/test?parseTime=true&multiStatements=true",
+		MySQLTLS:             true,
 		CassandraHosts:       "127.0.0.1",
 		CassandraKeyspace:    "bench",
 		CassandraConsistency: "LOCAL_QUORUM",
@@ -70,7 +71,7 @@ func Default() Config {
 func BindCommonFlags(fs *pflag.FlagSet, cfg *Config) {
 	fs.StringVar((*string)(&cfg.DB), "db", string(cfg.DB), "Target database: mysql|cassandra")
 	fs.StringVar(&cfg.MySQLDSN, "mysql-dsn", cfg.MySQLDSN, "MySQL DSN")
-	fs.BoolVar(&cfg.MySQLTLSSkipVerify, "mysql-tls-skip-verify", cfg.MySQLTLSSkipVerify, "Skip TLS certificate/hostname verification for MySQL (INSECURE)")
+	fs.BoolVar(&cfg.MySQLTLS, "mysql-tls", cfg.MySQLTLS, "Enable TLS for MySQL")
 	fs.StringVar(&cfg.CassandraHosts, "cassandra-hosts", cfg.CassandraHosts, "Cassandra hosts, comma-separated")
 	fs.StringVar(&cfg.CassandraKeyspace, "cassandra-keyspace", cfg.CassandraKeyspace, "Cassandra keyspace")
 	fs.StringVar(&cfg.CassandraUsername, "cassandra-username", cfg.CassandraUsername, "Cassandra username")
