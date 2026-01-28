@@ -1,0 +1,21 @@
+# Binaries
+/bench
+/cmd/bench/bench
+/bin/
+
+# Go build artifacts
+*.exe
+*.test
+*.out
+*.prof
+*.pprof
+coverage.*
+
+# IDE
+.vscode/
+.idea/
+
+# Benchmark outputs
+*.json
+*.csv
+*.log
